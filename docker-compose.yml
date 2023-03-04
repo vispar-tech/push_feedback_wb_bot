@@ -1,0 +1,121 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: ./compose/Dockerfile
+    image: tg_web_dev
+    container_name: tg_web_dev
+    command: /start-django
+    restart: on-failure
+    stdin_open: true
+    tty: true
+    volumes:
+      - .:/app
+    expose:
+      - 8000
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.django.rule=Host(`localhost`)"
+    env_file:
+      - ./.env/.dev.env
+    depends_on:
+      - db
+      - redis
+
+  tg_bot:
+    build:
+      context: .
+      dockerfile: ./compose/Dockerfile
+    image: tg_bot
+    container_name: tg_bot
+    command: /start-bot
+    restart: always
+    volumes:
+      - .:/app
+    env_file:
+      - ./.env/.dev.env
+    depends_on:
+      - db
+      - redis
+
+  db:
+    image: postgres:13.0-alpine
+    container_name: tg_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=django_tg_bot
+      - POSTGRES_PASSWORD=django_tg_bot
+      - POSTGRES_DB=django_tg_bot_dev
+
+  redis:
+    image: redis:7-alpine
+    container_name: tg_redis
+    volumes:
+      - redis-data:/data
+
+  celery_worker:
+    build:
+      context: .
+      dockerfile: ./compose/Dockerfile
+    image: tg_celeryworker
+    container_name: tg_celeryworker
+    command: /start-worker
+    restart: on-failure
+    volumes:
+      - .:/app
+    env_file:
+      - ./.env/.dev.env
+    depends_on:
+      - redis
+      - db
+
+  celery_beat:
+    build:
+      context: .
+      dockerfile: ./compose/Dockerfile
+    image: tg_celerybeat
+    container_name: tg_celerybeat
+    command: /start-beat
+    restart: on-failure
+    volumes:
+      - .:/app
+    env_file:
+      - ./.env/.dev.env
+    depends_on:
+      - redis
+      - db
+
+  flower:
+    build:
+      context: .
+      dockerfile: ./compose/Dockerfile
+    image: tg_flower
+    container_name: tg_flower
+    command: /start-flower
+    restart: on-failure
+    volumes:
+      - .:/app
+    env_file:
+      - ./.env/.dev.env
+    ports:
+      - 5557:5555
+    depends_on:
+      - redis
+      - db
+
+  traefik:
+    image: traefik:latest
+    container_name: tg_traefik
+    ports:
+      - 8008:80
+      - 8081:8080
+    volumes:
+      - "$PWD/compose/traefik.toml:/etc/traefik/traefik.toml"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+
+volumes:
+  redis-data:
+  postgres_data:

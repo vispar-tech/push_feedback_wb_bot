@@ -1,0 +1,6 @@
+[flake8]
+max-line-length=1000
+exclude=
+    venv,
+    .venv,
+    */migrations/*

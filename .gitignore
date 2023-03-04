@@ -1,0 +1,59 @@
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history
+
+# Visual Studio Code related
+.classpath
+.project
+.settings/
+.vscode/
+
+# Miscellaneous
+*.class
+*.lock
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.buildlog/
+.history
+.svn/
+
+# Django
+*.log
+*.pot
+*.pyc
+__pycache__
+db.sqlite3
+media
+
+# Python
+*.py[cod]
+*$py.class
+
+# pyenv
+.python-version
+
+# celery
+celerybeat-schedule.*
+celerybeat-schedule
+
+# gunicorn
+gunicorn.log
+
+# pyTelegramBotApi handlers
+.handler-saves
