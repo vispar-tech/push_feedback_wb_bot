@@ -1,4 +1,4 @@
-# Define markups inside class Markups here
+# Пропишите markup клавиатур для ботов здесь
 from telebot.types import (InlineKeyboardButton, InlineKeyboardMarkup,  # noqa
                            KeyboardButton, ReplyKeyboardMarkup,
                            ReplyKeyboardRemove)

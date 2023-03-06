@@ -1,1 +1,1 @@
-# Define tools for your bot here
+# Пропишите функции для ботов здесь

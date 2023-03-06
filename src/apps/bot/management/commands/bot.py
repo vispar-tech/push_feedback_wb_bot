@@ -11,10 +11,10 @@ def restart_bot():
     bot.load_next_step_handlers()
     while True:
         try:
-            print(f'Bot {bot.get_me().first_name}(@{bot.get_me().username}) started!')
+            print(f'Бот {bot.get_me().first_name}(@{bot.get_me().username}) запущен!')
             bot.polling(none_stop=True, timeout=360)
         except Exception as e:
-            print(f'Bot {bot.get_me().first_name}(@{bot.get_me().username}) restarted by exception')
+            print(f'Бот {bot.get_me().first_name}(@{bot.get_me().username}) перезапущен из-за ошибки')
             bot.logger.error(e, exc_info=True)
             continue
 
@@ -39,7 +39,7 @@ def recieve_contact(message):
     if message.contact.user_id == message.from_user.id:
         bot.register_new_user(message)
     else:
-        bot.register_next_step_handler(bot.send(message.chat.id, '<b>Unfortunately, it doesn`t look like a your contact, try send again🤷🏼‍♂️</b>', bot.markups.register()), recieve_contact)
+        bot.register_next_step_handler(bot.send(message.chat.id, '<b>К сожалению, это не похоже на контакт, попробуйте отправить еще раз🤷🏼‍♂️</b>', bot.markups.register()), recieve_contact)
 
 
 @bot.message_handler(commands=['start'])

@@ -106,7 +106,7 @@ class Bot(BaseBot):
 
     def get_user(self, user_id: int) -> TelegramUser:
         """
-            Get telegram user object
+            Возвращает объект пользователя телеграмма
 
             :return TelegramUser:
         """
@@ -114,7 +114,7 @@ class Bot(BaseBot):
 
     def is_new_user(self, message: Message) -> bool:
         """
-            Check if user is new or already exists in database
+            Проверяет есть ли такой пользователь в базе данныъ
 
             :return bool:
         """
@@ -122,7 +122,7 @@ class Bot(BaseBot):
 
     def kick_user(self, user_id: int):
         """
-            If user blocked bot when set unactive to True
+            Если пользователь блокирует бота то ставит unactive в True
         """
         if isinstance(user_id, str) and user_id.is_digit():
             user_id = int(user_id)
@@ -133,20 +133,20 @@ class Bot(BaseBot):
 
     def register_new_user(self, message: Message) -> None:
         """
-            Recieve contact from message and create new user
+            Обрабатываем отправленный пользователем контает и создаем объект пользователя в базе данных
         """
         if not TelegramUser.objects.filter(user_id=message.contact.user_id).exists():
             TelegramUser.objects.create(user_id=message.contact.user_id, username=message.from_user.username, phone_number=message.contact.phone_number)
-        self.send(message.chat.id, 'Now you are registered in Django Telegram Bot', self.markups.welcome())
+        self.send(message.chat.id, 'Теперь вы зарегистрированны в Джанго телеграмм боте!', self.markups.welcome())
 
     def send_register_message(self, message: Message) -> Message:
         """
-            Send message with keyboard to recieve contact from user
+            Отправляет сообщение с клавиатурой для отправки контакта пользователем
         """
-        return self.send(message.chat.id, '<b>To register in the bot, you need to send a contact, if you agree, then click on the button below▶️</b>', self.markups.register())
+        return self.send(message.chat.id, '<b>Для регистрации в боте необходимо отправить контакт, если вы согласны, то нажмите на кнопку ниже⤵️</b>', self.markups.register())
 
     def send_welcome_message(self, message: Message) -> Message:
         """
-            Send welcome text message
+            Отправляет привественное сообщение
         """
         return self.send(message.chat.id, txts.welcome_text, self.markups.welcome())
