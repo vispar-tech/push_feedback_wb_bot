@@ -7,7 +7,7 @@ services:
       dockerfile: ./compose/Dockerfile.prod
     image: tg_web_prod
     container_name: tg_web_prod
-    command: /start
+    command: /start-django
     expose:
       - 8000
     restart: on-failure
@@ -41,14 +41,36 @@ services:
       - redis
 
   db:
-    image: postgres:13.0-alpine
+    image: postgres:13.3
     container_name: tg_db
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     environment:
-      - POSTGRES_USER=django_tg_bot
-      - POSTGRES_PASSWORD=django_tg_bot
-      - POSTGRES_DB=django_tg_bot_prod
+      POSTGRES_USER: "django_tg_bot"
+      POSTGRES_PASSWORD: "django_tg_bot"
+      POSTGRES_DB: "django_tg_bot_prod"
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U django_tg_bot -d django_tg_bot_dev"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+
+  pgadmin:
+    container_name: tg_pgadmin
+    image: dpage/pgadmin4:6.20
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "django_tg_bot@tg.com"
+      PGADMIN_DEFAULT_PASSWORD: "django_tg_bot"
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+    volumes:
+      - ./pgadmin:/var/lib/pgadmin
+    ports:
+      - '8080:80'
+    restart: unless-stopped
 
   redis:
     image: redis:7-alpine
@@ -91,7 +113,7 @@ services:
   flower:
     build:
       context: .
-      dockerfile: ./compose/local/django/Dockerfile
+      dockerfile: ./compose/Dockerfile.prod
     image: tg_flower
     container_name: tg_flower
     command: /start-flower
@@ -117,4 +139,4 @@ services:
 
 volumes:
   redis-data:
-  db-data:
+  postgres_data:

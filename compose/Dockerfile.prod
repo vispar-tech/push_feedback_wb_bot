@@ -33,6 +33,4 @@ RUN sed -i 's/\r$//g' /start-flower && chmod +x /start-flower
 COPY ./compose/django/start-bot.sh /start-bot
 RUN sed -i 's/\r$//g' /start-bot && chmod +x /start-bot
 
-WORKDIR /app
-
 ENTRYPOINT ["/entrypoint"]

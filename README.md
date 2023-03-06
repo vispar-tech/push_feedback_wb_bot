@@ -40,3 +40,4 @@ __*rename .env-template/, .env-template/.dev.env-template, .env-template/.prod.e
 
 * Rewrite bot to webhook
 * Add traefik ssl production
+* Replace pgadmin to adminer

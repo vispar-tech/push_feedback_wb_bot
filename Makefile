@@ -1,10 +1,10 @@
 .PHONY: dev-up dev-down prod-up prod-down migrate collectstatic
 
 prod-up:
-	docker compose -f docker-compose.prod.yaml up -d --build
+	docker compose -f docker-compose.prod.yml up -d --build
 
 prod-down:
-	docker compose -f docker-compose.prod.yaml down
+	docker compose -f docker-compose.prod.yml down
 
 dev-up:
 	docker compose up -d --build

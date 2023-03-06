@@ -133,8 +133,7 @@ if DEBUG is False:
             'verbose': {
                 'format':
                     '%(asctime)s %(levelname)s %(pathname)s:%(lineno)d\n' +
-                    '[MESSAGE]:%(message)s\n'
-                    '\n-----------------------------\n'
+                    '%(message)s\n'
             },
             'simple': {
                 'format': '%(levelname)s %(message)s'

@@ -57,3 +57,6 @@ gunicorn.log
 
 # pyTelegramBotApi handlers
 .handler-saves
+
+# pgadmin files
+pgadmin
