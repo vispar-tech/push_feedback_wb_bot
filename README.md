@@ -36,7 +36,7 @@ __*rename .env-template/, .env-template/.dev.env-template, .env-template/.prod.e
     make prod-up
     make prod-down
 
-#### Unordered
+#### TODOS
 
 * Rewrite bot to webhook
 * Add traefik ssl production
