@@ -4,7 +4,7 @@
 
     pyenv install 3.10.0 &&
     pyenv local 3.10.0 &&
-    python -m pip install poetry &&
+    python -m pip install poetry &&image.png
     python -m poetry install &&
     poetry run pre-commit install
 
@@ -35,9 +35,3 @@ __*rename .env-template/, .env-template/.dev.env-template, .env-template/.prod.e
 
     make prod-up
     make prod-down
-
-#### TODOS
-
-* Rewrite bot to webhook
-* Add traefik ssl production
-* Replace pgadmin to adminer

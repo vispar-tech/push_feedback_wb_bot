@@ -1,3 +1,5 @@
+from pprint import pprint
+
 from apps.bot.bots import Bot
 from django.conf import settings
 from django.core.management import BaseCommand
@@ -36,6 +38,7 @@ def bot_kicked(member):
 
 @bot.message_handler(content_types=['contact'])
 def recieve_contact(message):
+    pprint(message.contact)
     if message.contact.user_id == message.from_user.id:
         bot.register_new_user(message)
     else:
@@ -50,11 +53,26 @@ def start(message):
         bot.send_welcome_message(message)
 
 
+@bot.message_handler(commands=['my'], func=lambda message: bot.is_new_user(message) is False)
+def my(message):
+    bot.send_my_personals(message)
+
+
+@bot.message_handler(commands=['articles'], func=lambda message: bot.is_new_user(message) is False)
+def articles(message):
+    bot.send_tracked_articles(message)
+
+
+@bot.message_handler(commands=['settings'], func=lambda message: bot.is_new_user(message) is False)
+def change_stars(message):
+    bot.settings(message)
+
+
 @bot.callback_query_handler(func=lambda call: True)
 def handle_callback(call):
-    pass
-
-
-@bot.message_handler(content_types=['text'])
-def message_handler(message):
-    pass
+    if 'wb' in call.data:
+        bot.process_wb(call)
+    elif 'tracked_articles' in call.data:
+        bot.process_tracked_articles(call)
+    elif 'settings' in call.data:
+        bot.settings_process(call)
