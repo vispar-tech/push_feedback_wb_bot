@@ -2,11 +2,7 @@
 
 ## Dependencies
 
-    pyenv install 3.10.0 &&
-    pyenv local 3.10.0 &&
-    python -m pip install poetry &&image.png
-    python -m poetry install &&
-    poetry run pre-commit install
+    pyenv install 3.10.0 && pyenv local 3.10.0 && python -m pip install poetry && python -m poetry install && poetry run pre-commit install
 
 ## ENV setup
 
