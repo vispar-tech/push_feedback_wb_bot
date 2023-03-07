@@ -1,5 +1,3 @@
-from pprint import pprint
-
 from apps.bot.bots import Bot
 from django.conf import settings
 from django.core.management import BaseCommand
@@ -38,41 +36,70 @@ def bot_kicked(member):
 
 @bot.message_handler(content_types=['contact'])
 def recieve_contact(message):
-    pprint(message.contact)
-    if message.contact.user_id == message.from_user.id:
-        bot.register_new_user(message)
-    else:
-        bot.register_next_step_handler(bot.send(message.chat.id, '<b>К сожалению, это не похоже на контакт, попробуйте отправить еще раз🤷🏼‍♂️</b>', bot.markups.register()), recieve_contact)
+    try:
+        if message.contact.user_id == message.from_user.id:
+            bot.register_new_user(message)
+        else:
+            bot.register_next_step_handler(bot.send(message.chat.id, '<b>К сожалению, это не похоже на контакт, попробуйте отправить еще раз🤷🏼‍♂️</b>', bot.markups.register()), recieve_contact)
+    except Exception as err:
+        bot.logger.error(err, exc_info=True)
+        bot.delete(message.chat.id, message.id)
+        bot.send_error_message(message.chat.id)
 
 
 @bot.message_handler(commands=['start'])
 def start(message):
-    if bot.is_new_user(message):
-        bot.send_register_message(message)
-    else:
-        bot.send_welcome_message(message)
+    try:
+        if bot.is_new_user(message):
+            bot.send_register_message(message)
+        else:
+            bot.send_welcome_message(message)
+    except Exception as err:
+        bot.logger.error(err, exc_info=True)
+        bot.delete(message.chat.id, message.id)
+        bot.send_error_message(message.chat.id)
 
 
 @bot.message_handler(commands=['my'], func=lambda message: bot.is_new_user(message) is False)
 def my(message):
-    bot.send_my_personals(message)
+    try:
+        bot.send_my_personals(message)
+    except Exception as err:
+        bot.logger.error(err, exc_info=True)
+        bot.delete(message.chat.id, message.id)
+        bot.send_error_message(message.chat.id)
 
 
 @bot.message_handler(commands=['articles'], func=lambda message: bot.is_new_user(message) is False)
 def articles(message):
-    bot.send_tracked_articles(message)
+    try:
+        bot.send_tracked_articles(message)
+    except Exception as err:
+        bot.logger.error(err, exc_info=True)
+        bot.delete(message.chat.id, message.id)
+        bot.send_error_message(message.chat.id)
 
 
 @bot.message_handler(commands=['settings'], func=lambda message: bot.is_new_user(message) is False)
 def change_stars(message):
-    bot.settings(message)
+    try:
+        bot.settings(message)
+    except Exception as err:
+        bot.logger.error(err, exc_info=True)
+        bot.delete(message.chat.id, message.id)
+        bot.send_error_message(message.chat.id)
 
 
 @bot.callback_query_handler(func=lambda call: True)
 def handle_callback(call):
-    if 'wb' in call.data:
-        bot.process_wb(call)
-    elif 'tracked_articles' in call.data:
-        bot.process_tracked_articles(call)
-    elif 'settings' in call.data:
-        bot.settings_process(call)
+    try:
+        if 'wb' in call.data:
+            bot.process_wb(call)
+        elif 'tracked_articles' in call.data:
+            bot.process_tracked_articles(call)
+        elif 'settings' in call.data:
+            bot.settings_process(call)
+    except Exception as err:
+        bot.logger.error(err, exc_info=True)
+        bot.delete(call.message.chat.id, call.message.message_id)
+        bot.send_error_message(call.message.chat.id)

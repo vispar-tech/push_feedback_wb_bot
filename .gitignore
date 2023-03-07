@@ -60,4 +60,6 @@ gunicorn.log
 
 # pgadmin files
 pgadmin
-src/apps/bot/temporary_files
+src/apps/bot/temporary_files/*
+src/apps/bot/logs/*
+./logs

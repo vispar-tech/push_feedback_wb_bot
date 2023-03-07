@@ -32,6 +32,9 @@ class BaseBot(telebot.TeleBot):
         self.logger = logger
         super().__init__(token=token, parse_mode='html', threaded=False, *args, **kwargs)
 
+    def send_error_message(self, chat_id: int) -> Message:
+        return self.send(chat_id, txts.error_text)
+
     def send_admin_message(self, message_text: str) -> Message:
         return self.send(self.ADMIN_USER_ID, message_text)
 
@@ -449,7 +452,6 @@ class Bot(BaseBot):
 
     def notify_new_feedback(self, feedback: object):
         if len(feedback.feedbackphoto_set.all()) != 0:
-            print([photo.url for photo in feedback.feedbackphoto_set.all()])
             return self.send_photo(feedback.article.personal.user.user_id, tools.merge_card_images([photo.url for photo in feedback.feedbackphoto_set.all()]), feedback.format_notification_message(), self.markups.href_nmid(feedback.article.nmId))
         else:
             return self.send(feedback.article.personal.user.user_id, feedback.format_notification_message(), self.markups.href_nmid(feedback.article.nmId))
