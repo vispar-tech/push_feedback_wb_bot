@@ -182,7 +182,7 @@ class Bot(BaseBot):
         """
         if not TelegramUser.objects.filter(user_id=message.contact.user_id).exists():
             TelegramUser.objects.create(user_id=message.contact.user_id, username=message.from_user.username, phone_number=message.contact.phone_number)
-        self.send(message.chat.id, 'Теперь вы зарегистрированны в Джанго телеграмм боте!', self.markups._remove())
+        self.send(message.chat.id, txts.welcome_text, self.markups._remove())
 
     def send_register_message(self, message: Message) -> Message:
         """
