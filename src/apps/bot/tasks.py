@@ -61,7 +61,7 @@ def update_table_sheets():
                 sheet_name = f'#{personal.id} {personal.name}'
                 response = tools.add_sheet(service, sheet_name)
                 table_values = [
-                    'Артикул WB(ссылка)', 'Артикул поставщика', 'Кол-во отзывов'
+                    ['Артикул WB(ссылка)', 'Артикул поставщика', 'Кол-во отзывов']
                 ]
                 for article in personal.trackedarticle_set.all():
                     table_values.append([
