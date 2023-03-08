@@ -64,3 +64,4 @@ pgadmin
 src/apps/bot/temporary_files/*
 src/apps/bot/logs/*
 ./logs
+src/apps/bot/utils/creds/push-feedback-wb-bot-6a2cdc52ebc8.json

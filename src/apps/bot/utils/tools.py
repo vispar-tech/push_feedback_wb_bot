@@ -5,11 +5,15 @@ import json
 import os
 import uuid
 
+import httplib2
 import openpyxl
 import requests
 from apps.bot.models import TelegramUser
+from apps.bot.utils.constants import SPREADSHEET_ID
 from django.conf import settings
+from googleapiclient.discovery import build
 from loguru import logger
+from oauth2client.service_account import ServiceAccountCredentials
 from openpyxl.styles import Alignment, Border, Color, Font, PatternFill, Side
 from PIL import Image
 
@@ -411,3 +415,112 @@ def merge_card_images(photos: list):
     file_stream.seek(0)
     delete_files(images_paths)
     return base64.b64encode(file_stream.read()).decode('utf-8')
+
+
+def get_service_sacc():
+    creds_json = os.path.dirname(__file__) + '/creds/push-feedback-wb-bot-6a2cdc52ebc8.json'
+    scopes = ['https://www.googleapis.com/auth/spreadsheets']
+
+    creds_service = ServiceAccountCredentials.from_json_keyfile_name(creds_json, scopes).authorize(httplib2.Http())
+    return build('sheets', 'v4', http=creds_service)
+
+
+def reset_sheet(service, sheet_id):
+    body = {
+        'requests': [
+            {
+                'updateCells': {
+                    'range': {
+                        'sheetId': sheet_id
+                    },
+                    'fields': 'userEnteredValue'
+                }
+            }
+        ]
+    }
+    return service.spreadsheets().batchUpdate(spreadsheetId=SPREADSHEET_ID, body=body).execute()
+
+
+def delete_sheet(service, sheet_id):
+    body = {
+        'requests': [
+            {
+                'deleteSheet': {
+                    'sheetId': sheet_id
+                }
+            }
+        ]
+    }
+
+    return service.spreadsheets().batchUpdate(spreadsheetId=SPREADSHEET_ID, body=body).execute()
+
+
+def delete_sheets(service=None, requests=[]):
+    if service is None:
+        service = get_service_sacc()
+    body = {
+        'requests': requests
+    }
+    return service.spreadsheets().batchUpdate(spreadsheetId=SPREADSHEET_ID, body=body).execute()
+
+
+def add_sheet(service=None, title='Новый лист'):
+    if service is None:
+        service = get_service_sacc()
+    body = {
+        'requests': [
+            {
+                'addSheet': {
+                    'properties': {
+                        'title': title,
+                        'gridProperties': {
+                            'rowCount': 999999,
+                            'columnCount': 3
+                        }
+                    }
+                }
+            }
+        ]
+    }
+
+    return service.spreadsheets().batchUpdate(spreadsheetId=SPREADSHEET_ID, body=body).execute()
+
+
+def get_spreadsheets(service=None):
+    if service is None:
+        service = get_service_sacc()
+    sheet_metadata = service.spreadsheets().get(spreadsheetId=SPREADSHEET_ID).execute()
+    sheets = sheet_metadata.get('sheets', '')
+    print(sheets)
+    return sheets
+    # title = sheets[0].get("properties", {}).get("title", "Sheet1")
+    # sheet_id = sheets[0].get("properties", {}).get("sheetId", 0)
+
+
+def append_table_values(service=None, sheet_title='', values=[]):
+    if service is None:
+        service = get_service_sacc()
+    body = {
+        'values': values
+    }
+    result = service.spreadsheets().values().append(spreadsheetId=SPREADSHEET_ID, range=f'{sheet_title}!A:B', valueInputOption='USER_ENTERED', body=body).execute()
+    print(f"{(result.get('updates').get('updatedCells'))} cells appended.")
+    return result
+
+
+def auto_resize_sheet(service=None, sheetId=''):
+    body = {
+        'requests': [
+            {
+                'autoResizeDimensions': {
+                    'dimensions': {
+                        'sheetId': sheetId,
+                        'dimension': 'COLUMNS',
+                        'startIndex': 0,
+                        'endIndex': 2
+                    }
+                }
+            }
+        ]
+    }
+    return service.spreadsheets().batchUpdate(spreadsheetId=SPREADSHEET_ID, body=body).execute()
