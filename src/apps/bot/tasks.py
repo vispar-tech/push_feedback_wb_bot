@@ -60,7 +60,6 @@ def update_table_sheets():
             if len(personal.trackedarticle_set.all()) != 0:
                 sheet_name = f'#{personal.id} {personal.name}'
                 response = tools.add_sheet(service, sheet_name)
-                print(f"NEW SHEET: {response.get('replies')[0].get('addSheet').get('properties').get('sheetId')}")
                 table_values = [
                     'Артикул WB(ссылка)', 'Артикул поставщика', 'Кол-во отзывов'
                 ]
