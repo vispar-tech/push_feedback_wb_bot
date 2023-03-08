@@ -11,13 +11,13 @@ services:
     restart: on-failure
     stdin_open: true
     tty: true
-    volumes:
-      - .:/app
     expose:
       - 8000
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.django.rule=Host(`localhost`)"
+    volumes:
+      - .:/app
     env_file:
       - ./.env/.dev.env
     depends_on:

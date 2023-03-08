@@ -8,14 +8,14 @@ services:
     image: tg_web_prod
     container_name: tg_web_prod
     command: /start-django
+    restart: on-failure
+    stdin_open: true
+    tty: true
     expose:
       - 8000
-    restart: on-failure
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.web.rule=Host(`localhost`)"
-      - "traefik.http.routers.web.entrypoints=websecure"
-      - "traefik.http.routers.web.tls.certresolver=myresolver"
+      - "traefik.http.routers.django.rule=Host(`localhost`)"
     volumes:
       - .:/app
     env_file:
@@ -69,7 +69,7 @@ services:
     volumes:
       - ./pgadmin:/var/lib/pgadmin
     ports:
-      - '8080:80'
+      - '8050:80'
     restart: unless-stopped
 
   redis:
