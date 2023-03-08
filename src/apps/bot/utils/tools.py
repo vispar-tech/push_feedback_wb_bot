@@ -475,7 +475,7 @@ def add_sheet(service=None, title='Новый лист'):
                         'title': title,
                         'gridProperties': {
                             'rowCount': 999999,
-                            'columnCount': 3
+                            'columnCount': 4
                         }
                     }
                 }
@@ -503,7 +503,7 @@ def append_table_values(service=None, sheet_title='', values=[]):
     body = {
         'values': values
     }
-    result = service.spreadsheets().values().append(spreadsheetId=SPREADSHEET_ID, range=f'{sheet_title}!A:B', valueInputOption='USER_ENTERED', body=body).execute()
+    result = service.spreadsheets().values().append(spreadsheetId=SPREADSHEET_ID, range=f'{sheet_title}!A:C', valueInputOption='USER_ENTERED', body=body).execute()
     print(f"{(result.get('updates').get('updatedCells'))} cells appended.")
     return result
 
