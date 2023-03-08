@@ -61,8 +61,14 @@ def update_table_sheets():
                 sheet_name = f'#{personal.id} {personal.name}'
                 response = tools.add_sheet(service, sheet_name)
                 print(f"NEW SHEET: {response.get('replies')[0].get('addSheet').get('properties').get('sheetId')}")
-                table_values = []
+                table_values = [
+                    'Артикул WB(ссылка)', 'Артикул поставщика', 'Кол-во отзывов'
+                ]
                 for article in personal.trackedarticle_set.all():
-                    table_values.append([article.article, '' if len(article.feedback_set.all()) == 0 else len(article.feedback_set.all())])
+                    table_values.append([
+                        f'=HYPERLINK("https://www.wildberries.ru/catalog/{article.nmId}/detail.aspx?targetUrl=SP", "{article.nmId}")',
+                        article.article,
+                        '' if len(article.feedback_set.all()) == 0 else len(article.feedback_set.all())
+                        ])
                 tools.append_table_values(service, sheet_name, table_values)
                 tools.auto_resize_sheet(service, response.get('replies')[0].get('addSheet').get('properties').get('sheetId'))
