@@ -65,7 +65,7 @@ def update_table_sheets():
                 ]
                 for article in personal.trackedarticle_set.all():
                     table_values.append([
-                        f'=HYPERLINK("https://www.wildberries.ru/catalog/{article.nmId}/detail.aspx?targetUrl=SP", "{article.nmId}")',
+                        f'=HYPERLINK("https://www.wildberries.ru/catalog/{article.nmId}/detail.aspx?targetUrl=SP"; "{article.nmId}")',
                         article.article,
                         '' if len(article.feedback_set.all()) == 0 else len(article.feedback_set.all())
                         ])
