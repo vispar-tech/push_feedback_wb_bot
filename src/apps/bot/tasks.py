@@ -36,9 +36,6 @@ def fetch_new_feedbacks(pk):
                                 for photo_link in feedback['photoLinks']:
                                     new_feedback.feedbackphoto_set.create(url=photo_link['miniSize'])
                             new_feedback.send_notify()
-            else:
-                user.reset_WBToken()
-                break
 
 
 @app.task(name='Update table sheets')
