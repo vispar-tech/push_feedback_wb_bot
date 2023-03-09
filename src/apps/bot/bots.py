@@ -208,8 +208,8 @@ class Bot(BaseBot):
                 return self.send(message.chat.id, '<b>🤷🏼‍♂️ К сожалению у вас нет ни одного кабинета</b>', self.markups.authorize_wb())
             else:
                 message_text = '<b>👨🏼‍💼 Список ваших кабинетов:</b>\n\n'
-                for i, personal in enumerate(user.personal_set.all()):
-                    message_text += '<b>%i.</b> <i>%s</i>\n' % (i+1, personal.name)
+                for personal in user.personal_set.all():
+                    message_text += '<b>ID:%i.</b> <i>%s</i>\n' % (personal.id, personal.name)
                 return self.send(message.chat.id, message_text, self.markups.logout_wb())
 
     def process_wb(self, call: CallbackQuery) -> Message:

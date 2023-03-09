@@ -1,6 +1,7 @@
 from apps.bot.management.commands.bot import bot
 from apps.bot.utils.tools import WBPersonalApiClient
 from django.db import models  # noqa
+from django.utils import timezone
 
 
 class Personal(models.Model):
@@ -42,7 +43,7 @@ class TrackedArticle(models.Model):
 
 class Feedback(models.Model):
 
-    id = models.CharField('ID', max_length=255, null=False, blank=False, primary_key=True)
+    wb_id = models.CharField('WB ID', max_length=255, null=False, blank=False)
     article = models.ForeignKey('polls.TrackedArticle', on_delete=models.CASCADE, verbose_name='Артикул', null=False, blank=False)
     text = models.TextField('Содержание', null=False, blank=False)
     stars = models.SmallIntegerField('Кол-во звезд', null=False, blank=False)
@@ -58,7 +59,7 @@ class Feedback(models.Model):
                f'🏷 <a href="https://www.wildberries.ru/catalog/{self.article.nmId}/detail.aspx?targetUrl=SP">{self.article.nmId}</a> | {self.article.article}\n\n' + \
                '<b>💫 Оценка:</b> %s\n' % ('⭐️' * self.stars) + \
                '<b>📃 Содержание отзыва:</b>\n%s\n\n' % (self.text) + \
-               '<i>🕐 Дата отзыва:</i> %s' % (self.created_date.strftime('%Y.%m.%d %H:%M:%S'))
+               '<i>🕐 Дата отзыва:</i> %s' % (timezone.make_naive(self.created_date).strftime('%Y.%m.%d %H:%M:%S'))
 
     def send_notify(self):
         return bot.notify_new_feedback(self)

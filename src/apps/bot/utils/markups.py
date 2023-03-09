@@ -27,7 +27,7 @@ class Markups:
             keyboard=[
                 [
                     InlineKeyboardButton(
-                        text=personal.name,
+                        text=f'#{personal.id} {personal.name}',
                         callback_data=personals_factory.new(personal_id=personal.id)
                     )
                 ]

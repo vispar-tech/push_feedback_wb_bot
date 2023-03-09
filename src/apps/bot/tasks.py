@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from apps.bot.models import TelegramUser
 from apps.bot.utils import tools
@@ -25,12 +25,13 @@ def fetch_new_feedbacks(pk):
                 for feedback in feedbacks[1]:
                     if personal.trackedarticle_set.filter(nmId=str(feedback['nmId'])).exists() and feedback['productValuation'] <= user.notification_stars:
                         article = personal.trackedarticle_set.get(nmId=str(feedback['nmId']))
-                        if not article.feedback_set.filter(id=feedback['id']).exists():
+                        if not article.feedback_set.filter(wb_id=feedback['id']).exists():
+                            print(datetime.strptime(feedback['createdDate'], '%Y-%m-%dT%H:%M:%SZ'))
                             new_feedback = article.feedback_set.create(
-                                id=feedback['id'],
+                                wb_id=feedback['id'],
                                 text=feedback['text'],
                                 stars=feedback['productValuation'],
-                                created_date=timezone.make_aware(datetime.strptime(feedback['createdDate'], '%Y-%m-%dT%H:%M:%SZ'))
+                                created_date=timezone.make_aware(datetime.strptime(feedback['createdDate'], '%Y-%m-%dT%H:%M:%SZ') + timedelta(hours=3))
                             )
                             if len(feedback['photoLinks']) != 0:
                                 for photo_link in feedback['photoLinks']:

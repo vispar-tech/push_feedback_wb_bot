@@ -44,7 +44,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Feedback',
             fields=[
-                ('id', models.CharField(max_length=255, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('wb_id', models.CharField(max_length=255, verbose_name='WB ID')),
                 ('text', models.TextField(verbose_name='Содержание')),
                 ('stars', models.SmallIntegerField(verbose_name='Кол-во звезд')),
                 ('created_date', models.DateTimeField(verbose_name='Дата отзыва на WB')),
